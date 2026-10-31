@@ -1,5 +1,4 @@
 import os
-from functools import lru_cache
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -33,8 +32,25 @@ class Settings(BaseModel):
     data_dir: Path = ROOT / "data"
 
 
-@lru_cache
+_NAMES = ("HF_TOKEN", "GEMINI_API_KEY", "GOOGLE_API_KEY", "GEMINI_API_KEY2", "SARVAM_API_KEY", "HF_MODEL_ID",
+          "VLM_MODEL_ID", "VLM_DEFAULT_MODEL", "VLM_FALLBACK_MODEL", "USE_MOCK_VLM", "CLASSIFIER")
+_cached: tuple[tuple[str, ...], Settings] | None = None
+
+
 def get_settings() -> Settings:
+    """The same object for as long as the environment is unchanged, rebuilt when a key is added or changed.
+
+    A permanent cache broke hosted deploys: if the app started before its secrets were saved, it kept the
+    empty values (and "SARVAM_API_KEY is not set") until a full restart.
+    """
+    global _cached
+    snapshot = tuple(_env(n) for n in _NAMES)
+    if _cached is None or _cached[0] != snapshot:
+        _cached = (snapshot, _build())
+    return _cached[1]
+
+
+def _build() -> Settings:
     return Settings(
         hf_token=_env("HF_TOKEN"),
         gemini_api_key=_env("GEMINI_API_KEY", "GOOGLE_API_KEY"),

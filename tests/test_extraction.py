@@ -74,3 +74,16 @@ def test_a_failed_read_is_retried_once():
             return super().extract(*a, **k)
     fake = Flaky(GOOD_PAN)
     assert run(fake).status == "ok" and fake.calls["extract"] == 2
+
+
+def test_settings_pick_up_keys_that_arrive_after_startup(monkeypatch):
+    """A hosted app can start before its secrets are saved; it must not keep the empty values."""
+    from core.config.settings import get_settings
+    monkeypatch.delenv("SARVAM_API_KEY", raising=False)
+    first = get_settings()
+    assert get_settings() is first                       # unchanged environment -> same object (tests rely on this)
+    monkeypatch.setenv("SARVAM_API_KEY", "sk_test_key_value")
+    refreshed = get_settings()
+    assert refreshed.sarvam_api_key == "sk_test_key_value" and refreshed is not first
+    monkeypatch.delenv("SARVAM_API_KEY")
+    assert get_settings().sarvam_api_key == ""

@@ -7,7 +7,7 @@ import streamlit as st
 try:
     for _k, _v in st.secrets.items():
         if isinstance(_v, (str, int, float, bool)):
-            os.environ.setdefault(str(_k), str(_v))
+            os.environ[str(_k)] = str(_v)       # secrets are authoritative on the host
 except Exception:
     pass                      # no secrets file locally
 
