@@ -1,0 +1,57 @@
+# Keys to extract per document type. `description` is sent to Sarvam Vision, so be specific.
+# `validators` are rule IDs resolved in core/validation (Phase 2).
+version: 1
+schemas:
+  pan:
+    fields:
+      - {key: pan_number, label: "PAN number", type: string, required: true, validators: [PAN_FORMAT, PAN_INDIVIDUAL], description: "10-character Permanent Account Number, exactly as printed"}
+      - {key: name, label: "Name", type: string, required: true, validators: [NAME_VALID], description: "Cardholder's full name, exactly as printed"}
+      - {key: father_name, label: "Father's name", type: string, required: false, validators: [NAME_VALID], description: "Father's name, exactly as printed"}
+      - {key: dob, label: "Date of birth", type: string, required: true, validators: [DOB_VALID, AGE_RANGE], description: "Date of birth, exactly as printed"}
+  aadhaar_front:
+    fields:
+      - {key: name, label: "Name", type: string, required: true, validators: [NAME_VALID], description: "Cardholder's full name, exactly as printed"}
+      - {key: dob, label: "Date of birth", type: string, required: true, validators: [DOB_VALID, AGE_RANGE], description: "Date of birth, exactly as printed"}
+      - {key: gender, label: "Gender", type: string, required: false, validators: [], description: "Gender as printed (Male, Female or Transgender)"}
+      - {key: aadhaar_number, label: "Aadhaar number", type: string, required: true, validators: [AADHAAR_FORMAT, AADHAAR_CHECKSUM], sensitive: true, description: "12-digit Aadhaar number, digits only, exactly as printed"}
+  aadhaar_back:
+    fields:
+      - {key: address, label: "Address", type: string, required: true, validators: [], description: "Full address printed on the back, exactly as printed"}
+      - {key: pincode, label: "Pincode", type: string, required: true, validators: [PINCODE], description: "6-digit postal pincode from the address"}
+  salary_slip:
+    fields:
+      - {key: employee_name, label: "Employee name", type: string, required: true, validators: [NAME_VALID], description: "Employee's full name, exactly as printed"}
+      - {key: employer_name, label: "Employer name", type: string, required: true, validators: [], description: "Employer or company name, exactly as printed"}
+      - {key: pay_month, label: "Pay month", type: string, required: true, validators: [PAY_MONTH_VALID], description: "Salary month and year, e.g. 'March 2026', exactly as printed"}
+      - {key: gross_salary, label: "Gross salary", type: number, required: true, validators: [AMOUNT_POSITIVE], description: "Gross salary or total earnings for the month, digits only, no currency symbol or commas"}
+      - {key: net_salary, label: "Net salary", type: number, required: true, validators: [AMOUNT_POSITIVE], description: "Net pay or take-home salary for the month, digits only, no currency symbol or commas"}
+      - {key: total_deductions, label: "Total deductions", type: number, required: false, validators: [], description: "Total deductions for the month, digits only, no currency symbol or commas"}
+      - {key: employee_id, label: "Employee ID", type: string, required: false, validators: [], description: "Employee code or ID, exactly as printed"}
+      - {key: designation, label: "Designation", type: string, required: false, validators: [], description: "Job title or designation, exactly as printed"}
+  bank_statement:
+    fields:
+      - {key: account_holder_name, label: "Account holder", type: string, required: true, validators: [NAME_VALID], description: "Account holder's name, exactly as printed"}
+      - {key: bank_name, label: "Bank name", type: string, required: true, validators: [], description: "Name of the bank, exactly as printed"}
+      - {key: account_number, label: "Account number", type: string, required: true, validators: [ACCOUNT_NO], sensitive: true, description: "Bank account number, digits only"}
+      - {key: ifsc, label: "IFSC", type: string, required: true, validators: [IFSC_FORMAT], description: "11-character IFSC code, exactly as printed"}
+      - {key: statement_from, label: "Statement from", type: string, required: true, validators: [DATE_VALID], description: "Statement period start date, exactly as printed"}
+      - {key: statement_to, label: "Statement to", type: string, required: true, validators: [DATE_VALID, DOC_DATE_NOT_FUTURE], description: "Statement period end date, exactly as printed"}
+      - {key: opening_balance, label: "Opening balance", type: number, required: false, validators: [], description: "Opening balance at the start of the period, digits only"}
+      - {key: closing_balance, label: "Closing balance", type: number, required: false, validators: [], description: "Closing balance at the end of the period, digits only"}
+  form16:
+    fields:
+      - {key: employee_name, label: "Employee name", type: string, required: true, validators: [NAME_VALID], description: "Employee full name, exactly as printed"}
+      - {key: employee_pan, label: "Employee PAN", type: string, required: true, validators: [PAN_FORMAT], sensitive: true, description: "Employee 10-character PAN, exactly as printed"}
+      - {key: employer_name, label: "Employer name", type: string, required: true, validators: [], description: "Employer or deductor name, exactly as printed"}
+      - {key: financial_year, label: "Financial year", type: string, required: true, validators: [], description: "Financial year or assessment year, e.g. 2025-26, exactly as printed"}
+      - {key: gross_salary, label: "Gross salary", type: number, required: true, validators: [AMOUNT_POSITIVE], description: "Gross salary for the year, digits only, no currency symbol or commas"}
+      - {key: taxable_income, label: "Taxable income", type: number, required: false, validators: [], description: "Total taxable income for the year, digits only"}
+      - {key: tax_deducted, label: "Tax deducted", type: number, required: false, validators: [], description: "Total tax deducted at source, digits only"}
+  itr:
+    fields:
+      - {key: name, label: "Name", type: string, required: true, validators: [NAME_VALID], description: "Taxpayer full name, exactly as printed"}
+      - {key: pan, label: "PAN", type: string, required: true, validators: [PAN_FORMAT], sensitive: true, description: "Taxpayer 10-character PAN, exactly as printed"}
+      - {key: assessment_year, label: "Assessment year", type: string, required: true, validators: [], description: "Assessment year, e.g. 2025-26, exactly as printed"}
+      - {key: gross_total_income, label: "Gross total income", type: number, required: false, validators: [], description: "Gross total income, digits only"}
+      - {key: total_income, label: "Total income", type: number, required: true, validators: [AMOUNT_POSITIVE], description: "Total income after deductions, digits only"}
+      - {key: acknowledgement_number, label: "Acknowledgement number", type: string, required: false, validators: [], description: "ITR acknowledgement number, exactly as printed"}

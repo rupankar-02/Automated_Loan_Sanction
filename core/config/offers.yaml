@@ -1,0 +1,100 @@
+# Fictional sample catalog. Every number is a demo assumption, not a real lender's policy.
+catalog_version: "2026-10-v1"
+disclaimer: "Indicative only. Subject to lender verification and credit bureau checks."
+
+inputs:                 # bounds for the "a few more details" form
+  tenure_months: {min: 6, max: 84}
+  score: {min: 300, max: 900}
+
+grids:                  # what-if grids precomputed for the chatbot
+  tenure_months: [12, 24, 36, 48, 60, 84]
+  amount_ladder: [50000, 100000, 200000, 300000, 400000, 500000, 750000, 1000000, 1500000, 2000000]
+
+rate_tiers:             # position inside each offer's rate band: 0 = bottom (best), 1 = top
+  - {min_score: 800, position: 0.0}
+  - {min_score: 750, position: 0.33}
+  - {min_score: 700, position: 0.66}
+  - {default: true, position: 1.0}
+adjustments:
+  form16_provided: -0.25   # percentage points, never below the band minimum
+
+offers:
+  - id: quick_small
+    name: "Quick Small-Ticket Loan"
+    lender: "Sample Lender A"
+    employment: [salaried]
+    min_net_income: 15000
+    min_age: 21
+    max_age_at_maturity: 60
+    min_credit_score: null
+    amount: {min: 10000, max: 100000}
+    tenure_months: {min: 6, max: 12}
+    rate_band_pct: {min: 16.0, max: 19.0}
+    processing_fee_pct: 3.0
+    foir_cap: 0.45
+    prepayment_charge_pct: 0.0
+    required_docs: [pan, aadhaar, salary_slip, bank_statement]
+
+  - id: salary_linked
+    name: "Salary-Linked Advance"
+    lender: "Sample Lender D"
+    employment: [salaried]
+    min_net_income: 20000
+    min_age: 21
+    max_age_at_maturity: 60
+    min_credit_score: 650
+    amount: {min: 25000, max: 300000}
+    tenure_months: {min: 6, max: 24}
+    rate_band_pct: {min: 14.0, max: 17.5}
+    processing_fee_pct: 1.5
+    foir_cap: 0.50
+    prepayment_charge_pct: 0.0
+    required_docs: [pan, aadhaar, salary_slip, bank_statement]
+
+  - id: flexi_tenure
+    name: "Flexi Tenure Loan"
+    lender: "Sample Lender E"
+    employment: [salaried]
+    min_net_income: 25000
+    min_age: 21
+    max_age_at_maturity: 60
+    min_credit_score: 680
+    amount: {min: 50000, max: 750000}
+    tenure_months: {min: 12, max: 84}
+    rate_band_pct: {min: 13.0, max: 16.0}
+    processing_fee_pct: 2.0
+    foir_cap: 0.50
+    prepayment_charge_pct: 1.0
+    required_docs: [pan, aadhaar, salary_slip, bank_statement]
+
+  - id: standard
+    name: "Standard Personal Loan"
+    lender: "Sample Lender B"
+    employment: [salaried]
+    min_net_income: 30000
+    min_age: 21
+    max_age_at_maturity: 60
+    min_credit_score: 700
+    amount: {min: 50000, max: 1000000}
+    tenure_months: {min: 12, max: 60}
+    rate_band_pct: {min: 12.0, max: 15.0}
+    processing_fee_pct: 1.5
+    foir_cap: 0.50
+    prepayment_charge_pct: 2.0
+    required_docs: [pan, aadhaar, salary_slip, bank_statement]
+
+  - id: premium
+    name: "Premium Salaried Loan"
+    lender: "Sample Lender C"
+    employment: [salaried]
+    min_net_income: 60000
+    min_age: 23
+    max_age_at_maturity: 60
+    min_credit_score: 750
+    amount: {min: 200000, max: 2000000}
+    tenure_months: {min: 12, max: 84}
+    rate_band_pct: {min: 10.5, max: 12.5}
+    processing_fee_pct: 1.0
+    foir_cap: 0.55
+    prepayment_charge_pct: 0.0
+    required_docs: [pan, aadhaar, salary_slip, bank_statement, form16]

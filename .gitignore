@@ -1,0 +1,21 @@
+# secrets
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+secrets.toml
+deploy_secrets.toml
+
+# python / tooling
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# runtime data: database, uploads, encryption key (created on first run)
+data/
+*.db
+*.sqlite
+*.sqlite3
+uploads/

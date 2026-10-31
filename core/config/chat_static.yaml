@@ -1,0 +1,15 @@
+glossary:
+  EMI: "Equated Monthly Instalment: the fixed amount you pay every month towards the loan."
+  FOIR: "Fixed Obligation to Income Ratio: the share of your monthly income that can go to loan EMIs in total. Each offer has its own cap."
+  processing_fee: "A one-time fee charged by the lender, shown as a percentage of the loan amount."
+  prepayment_charge: "A fee some lenders charge if you repay the loan early. Shown as a percentage of the amount prepaid."
+  total_cost: "Total interest plus the processing fee. It helps you compare offers but is not a regulatory APR."
+  credit_score: "A number from 300 to 900 that summarises your repayment history. Higher is better."
+  indicative: "A rough figure based on your documents and the details you entered. The lender confirms the final terms."
+how_we_decide: >
+  We compare your details with each offer's published criteria: employment type, monthly income
+  (average of your salary slips), age (including age at the end of the loan), credit score, loan amount,
+  tenure and the documents you provided. We also check that your total monthly EMIs, including the new
+  loan, stay within the offer's FOIR cap. The interest rate sits inside the offer's band: a higher credit
+  score places you lower in the band, and providing Form 16 or ITR lowers it slightly. Nothing else, such
+  as the purpose of the loan, is used. Every figure is indicative and subject to lender verification.

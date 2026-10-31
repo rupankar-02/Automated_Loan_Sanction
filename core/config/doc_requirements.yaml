@@ -1,0 +1,49 @@
+# Assumed lender policy. Swapping lenders = editing this file.
+# kind: id  -> card-like document (resolution rule uses the longest side)
+# kind: a4  -> page-like document (resolution rule uses the shortest side)
+documents:
+  pan:
+    display_name: "PAN Card"
+    description: "Front side of your PAN card (photo or scan)"
+    kind: id
+    accepts: [image, pdf]
+    expected_types: [pan]
+  aadhaar:
+    display_name: "Aadhaar Card"
+    description: "Front and back (the address is on the back)"
+    kind: id
+    accepts: [image, pdf]
+    sides: [front, back]
+    expected_types: [aadhaar_front, aadhaar_back]
+  salary_slip:
+    display_name: "Salary Slip"
+    description: "Last 3 months, one file per month (or one PDF with all 3)"
+    kind: a4
+    accepts: [image, pdf]
+    count: 3
+    recency_months: 3
+    expected_types: [salary_slip]
+  bank_statement:
+    display_name: "Bank Statement"
+    description: "Salary account, last 3 months, full statement PDF"
+    kind: a4
+    accepts: [pdf, image]
+    recency_months: 3
+    expected_types: [bank_statement]
+  form16_or_itr:
+    display_name: "Form 16 or ITR"
+    description: "Latest Form 16, or your latest ITR acknowledgement"
+    kind: a4
+    accepts: [pdf, image]
+    alternatives: [form16, itr]
+    expected_types: [form16, itr]
+
+# profiles: loan_type -> employment -> checklist (optional: true items do not block progress)
+profiles:
+  personal:
+    salaried:
+      - {doc: pan}
+      - {doc: aadhaar}
+      - {doc: salary_slip}
+      - {doc: bank_statement}
+      - {doc: form16_or_itr, optional: true}

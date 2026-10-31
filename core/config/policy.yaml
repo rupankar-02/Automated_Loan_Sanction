@@ -1,0 +1,38 @@
+# Thresholds. Blur values must be calibrated on real samples (see tests/test_quality.py).
+files:
+  allowed_ext: [jpg, jpeg, png, pdf]
+  min_image_kb: 20        # images only; digital PDFs can legitimately be small
+  max_mb: 10
+  max_pdf_pages: 15
+  max_pdf_pages_by_doc: {salary_slip: 6, bank_statement: 30}
+image:
+  min_long_side_id: 800   # card-like documents
+  min_short_side_a4: 1000 # page-like documents
+  blur_min_id: 100        # mean of the 500 strongest Laplacian responses at 1000 px width (sharp synthetic 200+, mild blur ~100)
+  blur_min_a4: 100
+  dark_mean_below: 40
+  bright_mean_above: 230
+  glare_pixel_pct: 6.0    # % of near-white pixels in a bright blob, for photos only
+  border_margin_px: 3
+pdf:
+  render_dpi: 150
+applicant:
+  min_age: 18
+  preferred_age_min: 21
+  preferred_age_max: 60
+retries:
+  max_field_attempts: 3
+months:
+  reference_date: 2026-10-31  # pinned so the sample documents in demo_data stay valid; set to null to use today (IST)
+  required_months: 3
+  slip_grace_days: 10         # early in the month the previous month's slip may not exist yet; 0 = no grace
+  allow_current_month: true   # accepted, never required
+  bank_start_tolerance_days: 5
+  bank_recency_days: 45
+limits:
+  max_reuploads_per_slot: 5      # re-uploads that reach the API, on top of the first upload; local rejections are free
+  max_api_calls_per_application: 40   # circuit breaker (Gemini + Sarvam calls), then offer manual review
+  max_salary_slip_pages: 4       # 3 months + 1 continuation page
+  sarvam_requests_per_minute: 10
+  sarvam_retries: 3
+  parallel_workers: 3
