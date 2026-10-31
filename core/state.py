@@ -45,6 +45,7 @@ class Part(BaseModel):
     quality_warnings: list[QualityIssue] = Field(default_factory=list)
     extraction_failed: bool = False
     schema_type: str | None = None      # which schema this part was read with (Form 16 vs ITR)
+    error: str | None = None            # why automatic reading failed (error type and short message, never document content)
 
 
 class SlotState(BaseModel):

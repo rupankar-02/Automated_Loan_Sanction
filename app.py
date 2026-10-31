@@ -56,8 +56,34 @@ def sidebar_privacy() -> None:
 
 
 steps.stepper()
+
+
+def sidebar_service_check() -> None:
+    """Shows whether the AI services are configured and reachable. Never shows a key."""
+    s = get_settings()
+    with st.sidebar.expander("Service check"):
+        st.markdown(f"- Sarvam key: {'set' if s.sarvam_api_key else '**missing**'}\n"
+                    f"- Gemini key: {'set' if s.gemini_api_key else '**missing**'}"
+                    f"{' (+ second key)' if s.gemini_api_key2 else ''}\n- Type check: {s.classifier}")
+        if st.button("Test document reading", key="svc_test"):
+            from PIL import Image, ImageDraw, ImageFont
+            from core.vlm.sarvam_doc import SarvamVisionExtractor
+            img = Image.new("RGB", (900, 300), "white")
+            try:
+                f = ImageFont.truetype("DejaVuSans.ttf", 56)
+            except OSError:
+                f = ImageFont.load_default()
+            ImageDraw.Draw(img).text((40, 100), "ABCPE1234F", fill="black", font=f)
+            try:
+                out = SarvamVisionExtractor().extract([{"key": "pan_number", "description": "the 10-character PAN, exactly as printed"}], images=[img])
+                st.success(f"Reading works: {out}")
+            except Exception as e:
+                st.error(f"{type(e).__name__}: {str(e)[:300]}")
+
+
 st.sidebar.caption("Prototype: please use the dummy documents from the demo_data folder, not real ones.")
 sidebar_privacy()
+sidebar_service_check()
 if st.session_state.pop("deleted", False):
     st.sidebar.success("Everything for that application has been deleted.")
 model_key = sidebar_model_picker()

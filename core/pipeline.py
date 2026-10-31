@@ -4,6 +4,7 @@ Order matters for cost: everything before `classify` is local and free; only wha
 API counts against the per-slot re-upload cap and the per-application call budget.
 """
 from concurrent.futures import ThreadPoolExecutor
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
@@ -204,12 +205,13 @@ def process_upload(state: ApplicationState, slot_id: str, filename: str, data: b
     return UploadOutcome(slot_id, "accepted", slot.notice)
 
 
-def _failed_part(slot: SlotState, name: str, h: str, ctx: RuleContext) -> Part:
+def _failed_part(slot: SlotState, name: str, h: str, ctx: RuleContext, error: str | None = None) -> Part:
+    print(f"[read-failed] slot={slot.slot_id} error={error}", file=sys.stderr, flush=True)   # visible in the host's logs
     schema = slot.schema_type or next(iter(slot.schema_types.values()))
     fields = validate_fields(schema, {}, ctx)
     for f in fields:
         f.message = f"We couldn't read your {slot.label}. Please enter this."
-    return Part(file_name=name, file_hash=h, extraction_failed=True, fields=fields, schema_type=schema)
+    return Part(file_name=name, file_hash=h, extraction_failed=True, fields=fields, schema_type=schema, error=error)
 
 
 def _process_single(slot, pages, pdf_bytes, metered, ctx, name, h, quality):
@@ -221,7 +223,7 @@ def _process_single(slot, pages, pdf_bytes, metered, ctx, name, h, quality):
         return [], Notice(code="UNREADABLE_DOC", message=f"We couldn't read this {slot.label}.",
                           fix_hint="Retake the photo in good light with the whole document in view.")
     if out.status == "failed":
-        return [_failed_part(slot, name, h, ctx)], None
+        return [_failed_part(slot, name, h, ctx, out.error)], None
     if not out.classification.get("fully_visible", True) and quality.has("CROPPED"):   # both signals agree
         return [], Notice(code="CROPPED", message=f"{slot.label} - part of the document is cut off.",
                           fix_hint="Make sure all four corners are visible in the photo.")
@@ -243,7 +245,7 @@ def _process_slips(slot, pages, metered, ctx, name, h):
             return [], Notice(code="UNREADABLE_DOC", message=f"We couldn't read page {i + 1} of this salary slip.",
                               fix_hint="Retake it in good light with the whole page in view.")
         if out.status == "failed":
-            parts.append(_failed_part(slot, label, h, ctx))
+            parts.append(_failed_part(slot, label, h, ctx, out.error))
             continue
         pay = next(f for f in out.fields if f.key == "pay_month")
         prev = parts[-1] if parts else (slot.parts[-1] if slot.parts else None)

@@ -89,6 +89,8 @@ def document_card(state: ApplicationState, slot: SlotState) -> list[tuple[str, s
             with st.expander(f"{part.file_name}" + (f" · {part.pages} pages" if part.pages > 1 else ""), expanded=status != "verified"):
                 if part.extraction_failed:
                     st.warning("We couldn't read this document automatically, so please type the details below.")
+                    if part.error:
+                        st.caption(f"Reason: {part.error}")
                 for f in part.fields:
                     field_row(f)
                 for i in part.issues:
